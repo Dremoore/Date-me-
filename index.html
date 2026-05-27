@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Will You Date Me? ❤️</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Great+Vibes&display=swap');
+
+    :root {
+      --pink: #ff4d94;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #fff0f5 0%, #ffe4f0 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+
+    .container {
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+    }
+
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.8rem;
+      color: var(--pink);
+      margin-bottom: 40px;
+      line-height: 1.1;
+      text-shadow: 0 4px 15px rgba(255, 77, 148, 0.3);
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .yes-btn {
+      background: linear-gradient(45deg, #ff4d94, #ff6ba8);
+      color: white;
+      font-size: 1.7rem;
+      font-weight: bold;
+      padding: 18px 50px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255, 77, 148, 0.4);
+      margin: 25px 0;
+      width: 85%;
+      max-width: 280px;
+    }
+
+    .yes-btn:active {
+      transform: scale(0.95);
+    }
+
+    .no-btn {
+      background: white;
+      color: #555;
+      font-size: 1.1rem;
+      padding: 12px 28px;
+      border: 2px solid #ddd;
+      border-radius: 50px;
+      position: absolute;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      user-select: none;
+      touch-action: none;
+    }
+
+    .dinner-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      gap: 16px;
+      margin: 30px 0;
+      padding: 0 10px;
+    }
+
+    .food-option {
+      background: white;
+      border-radius: 20px;
+      padding: 18px 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .food-option:active {
+      transform: scale(0.92);
+    }
+
+    .food-option.selected {
+      border: 4px solid var(--pink);
+      background: #fff0f5;
+    }
+
+    select {
+      width: 100%;
+      max-width: 280px;
+      padding: 14px;
+      margin: 8px auto;
+      display: block;
+      font-size: 1.1rem;
+      border-radius: 12px;
+      border: 2px solid #ffb3d1;
+    }
+
+    .final-message {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.6rem;
+      color: var(--pink);
+      margin: 30px 0 20px;
+      line-height: 1.2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Screen 1 -->
+    <div id="screen1" class="screen active">
+      <h1>Will you date me?</h1>
+      <button class="yes-btn" onclick="nextScreen(2)">YES ❤️</button>
+      <button id="noBtn" class="no-btn">No</button>
+    </div>
+
+    <!-- Screen 2: Date -->
+    <div id="screen2" class="screen">
+      <h1>When are we going? 🌹</h1>
+      <select id="month">
+        <option value="">Month</option>
+        <option value="June">June</option>
+        <option value="July">July</option>
+        <option value="August">August</option>
+      </select>
+      <select id="day">
+        <option value="">Day</option>
+      </select>
+      <select id="time">
+        <option value="">Time</option>
+        <option value="7:00 PM - 9:00 PM">7:00 PM - 9:00 PM</option>
+        <option value="8:00 PM - 10:00 PM">8:00 PM - 10:00 PM</option>
+        <option value="9:00 PM - 11:00 PM">9:00 PM - 11:00 PM</option>
+        <option value="10:00 PM - 12:00 AM">10:00 PM - 12:00 AM 🌙</option>
+      </select>
+      <button class="yes-btn" onclick="nextScreen(3)" style="margin-top:40px;">Next →</button>
+    </div>
+
+    <!-- Screen 3: Dinner -->
+    <div id="screen3" class="screen">
+      <h1>What should we eat? 🍽️</h1>
+      <div class="dinner-grid" id="foodGrid"></div>
+      <button id="proceedBtn" class="yes-btn" onclick="nextScreen(4)" style="display:none;">Proceed ❤️</button>
+    </div>
+
+    <!-- Screen 4: Final -->
+    <div id="screen4" class="screen">
+      <div class="final-message">Our date is set!<br>Can't wait ❤️</div>
+      <p id="dateSummary" style="font-size:1.25rem; color:#444; padding:0 20px;"></p>
+    </div>
+  </div>
+
+  <script>
+    let selectedFood = "";
+
+    const noBtn = document.getElementById('noBtn');
+
+    // Mobile-friendly dodging No button
+    function moveNoButton() {
+      const maxX = window.innerWidth - 120;
+      const maxY = window.innerHeight - 120;
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY * 0.6; // keep it in upper half
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    }
+
+    // Touch support for dodging
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moveNoButton();
+    });
+
+    noBtn.addEventListener('mousemove', () => {
+      if (Math.random() > 0.25) moveNoButton();
+    });
+
+    // Populate days
+    function populateDays() {
+      const daySelect = document.getElementById('day');
+      daySelect.innerHTML = '<option value="">Day</option>';
+      for(let i = 1; i <= 31; i++) {
+        daySelect.innerHTML += `<option value="\( {i}"> \){i}</option>`;
+      }
+    }
+
+    // Food options
+    const foods = [
+      {name: "Pizza", emoji: "🍕"},
+      {name: "Burger", emoji: "🍔"},
+      {name: "Pasta", emoji: "🍝"},
+      {name: "Sushi", emoji: "🍣"},
+      {name: "Steak", emoji: "🥩"},
+      {name: "Ramen", emoji: "🍜"}
+    ];
+
+    function createFoodOptions() {
+      const grid = document.getElementById('foodGrid');
+      grid.innerHTML = '';
+      foods.forEach(food => {
+        const div = document.createElement('div');
+        div.className = 'food-option';
+        div.innerHTML = `<div style="font-size:2.8rem;margin-bottom:8px;">\( {food.emoji}</div><div style="font-weight:600;"> \){food.name}</div>`;
+        div.onclick = () => {
+          document.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
+          div.classList.add('selected');
+          selectedFood = food.name;
+          document.getElementById('proceedBtn').style.display = 'block';
+        };
+        grid.appendChild(div);
+      });
+    }
+
+    function nextScreen(n) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(`screen${n}`).classList.add('active');
+
+      if (n === 4) {
+        const month = document.getElementById('month').value || "soon";
+        const day = document.getElementById('day').value || "";
+        const time = document.getElementById('time').value || "";
+        document.getElementById('dateSummary').innerHTML = 
+          `<strong>\( {selectedFood}</strong><br> \){month} \( {day}<br> \){time}`;
+
+        // Confetti
+        confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+        setTimeout(() => confetti({ particleCount: 120, angle: 60, spread: 60 }), 250);
+      }
+    }
+
+    // Initialize
+    window.onload = () => {
+      populateDays();
+      createFoodOptions();
+      moveNoButton();
+    };
+  </script>
+</body>
+</html>
