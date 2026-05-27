@@ -20,7 +20,13 @@
       justify-content: center;
     }
 
-    .container { width: 100%; max-width: 420px; padding: 20px; text-align: center; position: relative; }
+    .container { 
+      width: 100%; 
+      max-width: 420px; 
+      padding: 20px; 
+      text-align: center; 
+      position: relative; 
+    }
 
     h1 {
       font-family: 'Great Vibes', cursive;
@@ -33,7 +39,10 @@
     .screen { display: none; }
     .screen.active { display: block; animation: fadeIn 0.5s; }
 
-    @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+    @keyframes fadeIn { 
+      from {opacity:0; transform:translateY(20px);} 
+      to {opacity:1; transform:translateY(0);} 
+    }
 
     .yes-btn {
       background: linear-gradient(45deg, #ff4d94, #ff6ba8);
@@ -45,8 +54,10 @@
       border-radius: 50px;
       width: 85%;
       max-width: 280px;
-      margin: 15px 0;
+      margin: 15px auto;
+      display: block;
       box-shadow: 0 10px 30px rgba(255,77,148,0.4);
+      cursor: pointer;
     }
     .yes-btn:active { transform: scale(0.95); }
 
@@ -57,10 +68,10 @@
       border: 2px solid #ddd;
       border-radius: 50px;
       box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-      margin: 10px auto;
-      display: inline-block;
-      position: relative;
-      transition: all 0.25s ease;
+      margin: 15px auto;
+      display: block;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
     /* Calendar */
@@ -146,7 +157,7 @@
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
       </div>
-      <select id="time" style="padding:14px; font-size:1.1rem; border-radius:12px; border:2px solid #ffb3d1; margin-top:10px; width:85%;">
+      <select id="time" style="padding:14px; font-size:1.1rem; border-radius:12px; border:2px solid #ffb3d1; margin-top:10px; width:85%; display:block; margin:15px auto;">
         <option value="">Choose Time</option>
         <option value="7:00 PM - 9:00 PM">7:00 PM - 9:00 PM</option>
         <option value="8:00 PM - 10:00 PM">8:00 PM - 10:00 PM</option>
@@ -163,7 +174,58 @@
       <button id="proceedBtn" class="yes-btn" onclick="nextScreen(4)" style="display:none;">Proceed ❤️</button>
     </div>
 
-    <!-- Screen 4:        dayEl.className = `day ${isPast ? 'past' : ''}`;
+    <!-- Screen 4: Final -->
+    <div id="screen4" class="screen">
+      <div class="final-message">Our date is set!<br>Can't wait to see you ❤️</div>
+      <p id="dateSummary" style="font-size:1.3rem; color:#444; margin-top:20px;"></p>
+    </div>
+  </div>
+
+  <script>
+    let selectedDate = "";
+    let selectedFood = "";
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    const noBtn = document.getElementById('noBtn');
+
+    function moveNoButton() {
+      const maxX = 180;
+      const x = Math.random() * maxX - 60;
+      noBtn.style.transform = `translate(${x}px, ${Math.random() * 40 + 10}px)`;
+    }
+
+    noBtn.addEventListener('mousemove', moveNoButton);
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      moveNoButton();
+    });
+
+    function renderCalendar() {
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const today = new Date();
+      const todayDate = today.getDate();
+      const todayMonth = today.getMonth();
+      const todayYear = today.getFullYear();
+
+      document.getElementById('monthTitle').textContent = 
+        new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' });
+
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = `<div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div>
+                        <div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div>
+                        <div class="weekday">Sat</div>`;
+
+      for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const isPast = (currentYear < todayYear) || 
+                      (currentYear === todayYear && currentMonth < todayMonth) ||
+                      (currentYear === todayYear && currentMonth === todayMonth && day < todayDate);
+
+        const dayEl = document.createElement('div');
+        dayEl.className = `day ${isPast ? 'past' : ''}`;
         dayEl.textContent = day;
 
         if (!isPast) {
@@ -180,67 +242,4 @@
 
     function prevMonth() { 
       currentMonth--; 
-      if(currentMonth < 0){ currentMonth=11; currentYear--; } 
-      renderCalendar(); 
-    }
-    function nextMonth() { 
-      currentMonth++; 
-      if(currentMonth > 11){ currentMonth=0; currentYear++; } 
-      renderCalendar(); 
-    }
-
-    // Food Options - FIXED
-    const foods = [
-      {emoji: "🍕", name: "Pizza"},
-      {emoji: "🍔", name: "Burger"},
-      {emoji: "🍝", name: "Pasta"},
-      {emoji: "🍣", name: "Sushi"},
-      {emoji: "🥩", name: "Steak"},
-      {emoji: "🍜", name: "Ramen"}
-    ];
-
-    function createFoodOptions() {
-      const grid = document.getElementById('foodGrid');
-      grid.innerHTML = '';
-      
-      foods.forEach(food => {
-        const div = document.createElement('div');
-        div.className = 'food-option';
-        div.innerHTML = `
-          <div class="food-emoji">${food.emoji}</div>
-          <div style="font-weight:600;">${food.name}</div>
-        `;
-        div.onclick = () => {
-          document.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
-          div.classList.add('selected');
-          selectedFood = food.name;
-          document.getElementById('proceedBtn').style.display = 'block';
-        };
-        grid.appendChild(div);
-      });
-    }
-
-    function nextScreen(n) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(`screen${n}`).classList.add('active');
-
-      if (n === 4) {
-        const time = document.getElementById('time').value || "soon";
-        document.getElementById('dateSummary').innerHTML = `
-          <strong>${selectedFood}</strong><br>
-          ${selectedDate}<br>
-          ${time}
-        `;
-        confetti({ particleCount: 200, spread: 80 });
-        setTimeout(() => confetti({ particleCount: 150, angle: 60 }), 300);
-      }
-    }
-
-    window.onload = () => {
-      renderCalendar();
-      createFoodOptions();
-      moveNoButton();
-    };
-  </script>
-</body>
-</html>
+      if(currentMonth < 0){ currentMonth=11; currentYear
