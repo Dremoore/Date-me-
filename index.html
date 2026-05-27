@@ -8,132 +8,120 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Great+Vibes&display=swap');
 
-    :root {
-      --pink: #ff4d94;
-    }
+    :root { --pink: #ff4d94; }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: system-ui, sans-serif;
       background: linear-gradient(135deg, #fff0f5 0%, #ffe4f0 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      touch-action: manipulation;
+      overflow-x: hidden;
     }
 
-    .container {
-      text-align: center;
-      width: 100%;
-      max-width: 420px;
-      padding: 20px;
-    }
+    .container { width: 100%; max-width: 420px; padding: 20px; text-align: center; }
 
     h1 {
       font-family: 'Great Vibes', cursive;
-      font-size: 2.8rem;
+      font-size: 2.7rem;
       color: var(--pink);
-      margin-bottom: 40px;
+      margin-bottom: 30px;
       line-height: 1.1;
-      text-shadow: 0 4px 15px rgba(255, 77, 148, 0.3);
     }
 
-    .screen {
-      display: none;
-    }
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeIn 0.5s; }
 
-    .screen.active {
-      display: block;
-      animation: fadeIn 0.5s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
 
     .yes-btn {
       background: linear-gradient(45deg, #ff4d94, #ff6ba8);
       color: white;
-      font-size: 1.7rem;
+      font-size: 1.65rem;
       font-weight: bold;
-      padding: 18px 50px;
+      padding: 18px 40px;
       border: none;
       border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(255, 77, 148, 0.4);
-      margin: 25px 0;
       width: 85%;
       max-width: 280px;
+      margin: 25px 0;
+      box-shadow: 0 10px 30px rgba(255,77,148,0.4);
     }
-
-    .yes-btn:active {
-      transform: scale(0.95);
-    }
+    .yes-btn:active { transform: scale(0.95); }
 
     .no-btn {
       background: white;
       color: #555;
-      font-size: 1.1rem;
       padding: 12px 28px;
       border: 2px solid #ddd;
       border-radius: 50px;
       position: absolute;
       box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-      user-select: none;
-      touch-action: none;
     }
 
-    .dinner-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-      gap: 16px;
-      margin: 30px 0;
-      padding: 0 10px;
-    }
-
-    .food-option {
+    /* Calendar */
+    .calendar {
       background: white;
       border-radius: 20px;
-      padding: 18px 10px;
+      padding: 15px;
+      margin: 20px auto;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      font-weight: bold;
+      color: var(--pink);
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      text-align: center;
+    }
+    .weekday { font-size: 0.9rem; color: #888; padding: 5px 0; }
+    .day {
+      padding: 12px 8px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      font-size: 1.05rem;
     }
+    .day.past { color: #ccc; pointer-events: none; }
+    .day.today { background: #ffe4f0; font-weight: bold; }
+    .day.selected { background: var(--pink); color: white; }
+    .day:hover:not(.past) { background: #ffb3d1; }
 
-    .food-option:active {
-      transform: scale(0.92);
+    /* Food */
+    .dinner-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 25px 0;
     }
-
+    .food-option {
+      background: white;
+      border-radius: 18px;
+      padding: 15px 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: all 0.2s;
+    }
+    .food-option:active { transform: scale(0.92); }
     .food-option.selected {
       border: 4px solid var(--pink);
       background: #fff0f5;
     }
-
-    select {
-      width: 100%;
-      max-width: 280px;
-      padding: 14px;
-      margin: 8px auto;
-      display: block;
-      font-size: 1.1rem;
-      border-radius: 12px;
-      border: 2px solid #ffb3d1;
-    }
+    .food-emoji { font-size: 2.8rem; margin-bottom: 6px; }
 
     .final-message {
       font-family: 'Great Vibes', cursive;
       font-size: 2.6rem;
       color: var(--pink);
-      margin: 30px 0 20px;
       line-height: 1.2;
+      margin: 30px 0;
     }
   </style>
 </head>
@@ -147,29 +135,28 @@
       <button id="noBtn" class="no-btn">No</button>
     </div>
 
-    <!-- Screen 2: Date -->
+    <!-- Screen 2: Calendar -->
     <div id="screen2" class="screen">
       <h1>When are we going? 🌹</h1>
-      <select id="month">
-        <option value="">Month</option>
-        <option value="June">June</option>
-        <option value="July">July</option>
-        <option value="August">August</option>
-      </select>
-      <select id="day">
-        <option value="">Day</option>
-      </select>
-      <select id="time">
-        <option value="">Time</option>
+      <div class="calendar">
+        <div class="calendar-header">
+          <button onclick="prevMonth()">←</button>
+          <span id="monthTitle"></span>
+          <button onclick="nextMonth()">→</button>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+      <select id="time" style="padding:14px; font-size:1.1rem; border-radius:12px; border:2px solid #ffb3d1; margin-top:10px;">
+        <option value="">Choose Time</option>
         <option value="7:00 PM - 9:00 PM">7:00 PM - 9:00 PM</option>
         <option value="8:00 PM - 10:00 PM">8:00 PM - 10:00 PM</option>
         <option value="9:00 PM - 11:00 PM">9:00 PM - 11:00 PM</option>
         <option value="10:00 PM - 12:00 AM">10:00 PM - 12:00 AM 🌙</option>
       </select>
-      <button class="yes-btn" onclick="nextScreen(3)" style="margin-top:40px;">Next →</button>
+      <button class="yes-btn" onclick="nextScreen(3)" id="nextBtn2" style="display:none;">Next →</button>
     </div>
 
-    <!-- Screen 3: Dinner -->
+    <!-- Screen 3: Food -->
     <div id="screen3" class="screen">
       <h1>What should we eat? 🍽️</h1>
       <div class="dinner-grid" id="foodGrid"></div>
@@ -178,53 +165,81 @@
 
     <!-- Screen 4: Final -->
     <div id="screen4" class="screen">
-      <div class="final-message">Our date is set!<br>Can't wait ❤️</div>
-      <p id="dateSummary" style="font-size:1.25rem; color:#444; padding:0 20px;"></p>
+      <div class="final-message">Our date is set!<br>Can't wait to see you ❤️</div>
+      <p id="dateSummary" style="font-size:1.3rem; color:#444; margin-top:20px;"></p>
     </div>
   </div>
 
   <script>
+    let selectedDate = "";
     let selectedFood = "";
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
 
     const noBtn = document.getElementById('noBtn');
-
-    // Mobile-friendly dodging No button
     function moveNoButton() {
-      const maxX = window.innerWidth - 120;
-      const maxY = window.innerHeight - 120;
-      const x = Math.random() * maxX;
-      const y = Math.random() * maxY * 0.6; // keep it in upper half
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top = `${y}px`;
+      const maxX = window.innerWidth - 140;
+      const maxY = window.innerHeight * 0.5;
+      noBtn.style.left = Math.random() * maxX + "px";
+      noBtn.style.top = Math.random() * maxY + "px";
     }
+    noBtn.addEventListener('touchstart', moveNoButton);
+    noBtn.addEventListener('mousemove', () => Math.random() > 0.3 && moveNoButton());
 
-    // Touch support for dodging
-    noBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      moveNoButton();
-    });
+    // Calendar Functions
+    function renderCalendar() {
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const today = new Date();
+      const todayDate = today.getDate();
+      const todayMonth = today.getMonth();
+      const todayYear = today.getFullYear();
 
-    noBtn.addEventListener('mousemove', () => {
-      if (Math.random() > 0.25) moveNoButton();
-    });
+      document.getElementById('monthTitle').textContent = 
+        new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' });
 
-    // Populate days
-    function populateDays() {
-      const daySelect = document.getElementById('day');
-      daySelect.innerHTML = '<option value="">Day</option>';
-      for(let i = 1; i <= 31; i++) {
-        daySelect.innerHTML += `<option value="\( {i}"> \){i}</option>`;
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = `
+        <div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div>
+        <div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div>
+        <div class="weekday">Sat</div>`;
+
+      // Empty slots
+      for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += `<div></div>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const isPast = (currentYear < todayYear) || 
+                      (currentYear === todayYear && currentMonth < todayMonth) ||
+                      (currentYear === todayYear && currentMonth === todayMonth && day < todayDate);
+
+        const dayEl = document.createElement('div');
+        dayEl.className = `day ${isPast ? 'past' : ''}`;
+        dayEl.textContent = day;
+        if (!isPast) {
+          dayEl.onclick = () => {
+            document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
+            dayEl.classList.add('selected');
+            selectedDate = `${new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} ${day}, ${currentYear}`;
+            document.getElementById('nextBtn2').style.display = 'block';
+          };
+        }
+        grid.appendChild(dayEl);
       }
     }
 
-    // Food options
+    function prevMonth() { currentMonth--; if(currentMonth < 0){ currentMonth=11; currentYear--; } renderCalendar(); }
+    function nextMonth() { currentMonth++; if(currentMonth > 11){ currentMonth=0; currentYear++; } renderCalendar(); }
+
+    // Food
     const foods = [
-      {name: "Pizza", emoji: "🍕"},
-      {name: "Burger", emoji: "🍔"},
-      {name: "Pasta", emoji: "🍝"},
-      {name: "Sushi", emoji: "🍣"},
-      {name: "Steak", emoji: "🥩"},
-      {name: "Ramen", emoji: "🍜"}
+      {emoji:"🍕", name:"Pizza"},
+      {emoji:"🍔", name:"Burger"},
+      {emoji:"🍝", name:"Pasta"},
+      {emoji:"🍣", name:"Sushi"},
+      {emoji:"🥩", name:"Steak"},
+      {emoji:"🍜", name:"Ramen"}
     ];
 
     function createFoodOptions() {
@@ -233,7 +248,7 @@
       foods.forEach(food => {
         const div = document.createElement('div');
         div.className = 'food-option';
-        div.innerHTML = `<div style="font-size:2.8rem;margin-bottom:8px;">\( {food.emoji}</div><div style="font-weight:600;"> \){food.name}</div>`;
+        div.innerHTML = `<div class="food-emoji">\( {food.emoji}</div><div> \){food.name}</div>`;
         div.onclick = () => {
           document.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
           div.classList.add('selected');
@@ -249,21 +264,20 @@
       document.getElementById(`screen${n}`).classList.add('active');
 
       if (n === 4) {
-        const month = document.getElementById('month').value || "soon";
-        const day = document.getElementById('day').value || "";
-        const time = document.getElementById('time').value || "";
-        document.getElementById('dateSummary').innerHTML = 
-          `<strong>\( {selectedFood}</strong><br> \){month} \( {day}<br> \){time}`;
-
-        // Confetti
-        confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
-        setTimeout(() => confetti({ particleCount: 120, angle: 60, spread: 60 }), 250);
+        const time = document.getElementById('time').value || "soon";
+        document.getElementById('dateSummary').innerHTML = `
+          <strong>${selectedFood}</strong><br>
+          ${selectedDate}<br>
+          ${time}
+        `;
+        confetti({ particleCount: 200, spread: 80 });
+        setTimeout(() => confetti({ particleCount: 150, angle: 60 }), 300);
       }
     }
 
-    // Initialize
+    // Init
     window.onload = () => {
-      populateDays();
+      renderCalendar();
       createFoodOptions();
       moveNoButton();
     };
