@@ -20,13 +20,13 @@
       justify-content: center;
     }
 
-    .container { width: 100%; max-width: 420px; padding: 20px; text-align: center; }
+    .container { width: 100%; max-width: 420px; padding: 20px; text-align: center; position: relative; }
 
     h1 {
       font-family: 'Great Vibes', cursive;
       font-size: 2.7rem;
       color: var(--pink);
-      margin-bottom: 30px;
+      margin-bottom: 40px;
       line-height: 1.1;
     }
 
@@ -45,7 +45,7 @@
       border-radius: 50px;
       width: 85%;
       max-width: 280px;
-      margin: 25px 0;
+      margin: 15px 0;
       box-shadow: 0 10px 30px rgba(255,77,148,0.4);
     }
     .yes-btn:active { transform: scale(0.95); }
@@ -53,11 +53,14 @@
     .no-btn {
       background: white;
       color: #555;
-      padding: 12px 28px;
+      padding: 12px 32px;
       border: 2px solid #ddd;
       border-radius: 50px;
-      position: absolute;
       box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      margin: 10px auto;
+      display: inline-block;
+      position: relative;
+      transition: all 0.25s ease;
     }
 
     /* Calendar */
@@ -160,55 +163,7 @@
       <button id="proceedBtn" class="yes-btn" onclick="nextScreen(4)" style="display:none;">Proceed ❤️</button>
     </div>
 
-    <!-- Screen 4: Final -->
-    <div id="screen4" class="screen">
-      <div class="final-message">Our date is set!<br>Can't wait to see you ❤️</div>
-      <p id="dateSummary" style="font-size:1.3rem; color:#444; margin-top:20px;"></p>
-    </div>
-  </div>
-
-  <script>
-    let selectedDate = "";
-    let selectedFood = "";
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
-
-    const noBtn = document.getElementById('noBtn');
-    function moveNoButton() {
-      const maxX = window.innerWidth - 140;
-      const maxY = window.innerHeight * 0.5;
-      noBtn.style.left = Math.random() * maxX + "px";
-      noBtn.style.top = Math.random() * maxY + "px";
-    }
-    noBtn.addEventListener('touchstart', moveNoButton);
-    noBtn.addEventListener('mousemove', () => Math.random() > 0.3 && moveNoButton());
-
-    // Calendar
-    function renderCalendar() {
-      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const today = new Date();
-      const todayDate = today.getDate();
-      const todayMonth = today.getMonth();
-      const todayYear = today.getFullYear();
-
-      document.getElementById('monthTitle').textContent = 
-        new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' });
-
-      const grid = document.getElementById('calendarGrid');
-      grid.innerHTML = `<div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div>
-                        <div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div>
-                        <div class="weekday">Sat</div>`;
-
-      for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        const isPast = (currentYear < todayYear) || 
-                      (currentYear === todayYear && currentMonth < todayMonth) ||
-                      (currentYear === todayYear && currentMonth === todayMonth && day < todayDate);
-
-        const dayEl = document.createElement('div');
-        dayEl.className = `day ${isPast ? 'past' : ''}`;
+    <!-- Screen 4:        dayEl.className = `day ${isPast ? 'past' : ''}`;
         dayEl.textContent = day;
 
         if (!isPast) {
