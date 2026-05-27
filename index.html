@@ -18,7 +18,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow-x: hidden;
     }
 
     .container { width: 100%; max-width: 420px; padding: 20px; text-align: center; }
@@ -93,7 +92,6 @@
     .day.past { color: #ccc; pointer-events: none; }
     .day.today { background: #ffe4f0; font-weight: bold; }
     .day.selected { background: var(--pink); color: white; }
-    .day:hover:not(.past) { background: #ffb3d1; }
 
     /* Food */
     .dinner-grid {
@@ -107,7 +105,6 @@
       border-radius: 18px;
       padding: 15px 10px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      transition: all 0.2s;
     }
     .food-option:active { transform: scale(0.92); }
     .food-option.selected {
@@ -146,7 +143,7 @@
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
       </div>
-      <select id="time" style="padding:14px; font-size:1.1rem; border-radius:12px; border:2px solid #ffb3d1; margin-top:10px;">
+      <select id="time" style="padding:14px; font-size:1.1rem; border-radius:12px; border:2px solid #ffb3d1; margin-top:10px; width:85%;">
         <option value="">Choose Time</option>
         <option value="7:00 PM - 9:00 PM">7:00 PM - 9:00 PM</option>
         <option value="8:00 PM - 10:00 PM">8:00 PM - 10:00 PM</option>
@@ -186,7 +183,7 @@
     noBtn.addEventListener('touchstart', moveNoButton);
     noBtn.addEventListener('mousemove', () => Math.random() > 0.3 && moveNoButton());
 
-    // Calendar Functions
+    // Calendar
     function renderCalendar() {
       const firstDay = new Date(currentYear, currentMonth, 1).getDay();
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -199,15 +196,11 @@
         new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' });
 
       const grid = document.getElementById('calendarGrid');
-      grid.innerHTML = `
-        <div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div>
-        <div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div>
-        <div class="weekday">Sat</div>`;
+      grid.innerHTML = `<div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div>
+                        <div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div>
+                        <div class="weekday">Sat</div>`;
 
-      // Empty slots
-      for (let i = 0; i < firstDay; i++) {
-        grid.innerHTML += `<div></div>`;
-      }
+      for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div></div>`;
 
       for (let day = 1; day <= daysInMonth; day++) {
         const isPast = (currentYear < todayYear) || 
@@ -217,6 +210,7 @@
         const dayEl = document.createElement('div');
         dayEl.className = `day ${isPast ? 'past' : ''}`;
         dayEl.textContent = day;
+
         if (!isPast) {
           dayEl.onclick = () => {
             document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
@@ -229,26 +223,38 @@
       }
     }
 
-    function prevMonth() { currentMonth--; if(currentMonth < 0){ currentMonth=11; currentYear--; } renderCalendar(); }
-    function nextMonth() { currentMonth++; if(currentMonth > 11){ currentMonth=0; currentYear++; } renderCalendar(); }
+    function prevMonth() { 
+      currentMonth--; 
+      if(currentMonth < 0){ currentMonth=11; currentYear--; } 
+      renderCalendar(); 
+    }
+    function nextMonth() { 
+      currentMonth++; 
+      if(currentMonth > 11){ currentMonth=0; currentYear++; } 
+      renderCalendar(); 
+    }
 
-    // Food
+    // Food Options - FIXED
     const foods = [
-      {emoji:"🍕", name:"Pizza"},
-      {emoji:"🍔", name:"Burger"},
-      {emoji:"🍝", name:"Pasta"},
-      {emoji:"🍣", name:"Sushi"},
-      {emoji:"🥩", name:"Steak"},
-      {emoji:"🍜", name:"Ramen"}
+      {emoji: "🍕", name: "Pizza"},
+      {emoji: "🍔", name: "Burger"},
+      {emoji: "🍝", name: "Pasta"},
+      {emoji: "🍣", name: "Sushi"},
+      {emoji: "🥩", name: "Steak"},
+      {emoji: "🍜", name: "Ramen"}
     ];
 
     function createFoodOptions() {
       const grid = document.getElementById('foodGrid');
       grid.innerHTML = '';
+      
       foods.forEach(food => {
         const div = document.createElement('div');
         div.className = 'food-option';
-        div.innerHTML = `<div class="food-emoji">\( {food.emoji}</div><div> \){food.name}</div>`;
+        div.innerHTML = `
+          <div class="food-emoji">${food.emoji}</div>
+          <div style="font-weight:600;">${food.name}</div>
+        `;
         div.onclick = () => {
           document.querySelectorAll('.food-option').forEach(el => el.classList.remove('selected'));
           div.classList.add('selected');
@@ -275,7 +281,6 @@
       }
     }
 
-    // Init
     window.onload = () => {
       renderCalendar();
       createFoodOptions();
